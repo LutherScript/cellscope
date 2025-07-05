@@ -1,7 +1,7 @@
 from typing import Tuple, Union, Optional,List
 import pathlib
 import scanpy as sc
-import bioquest
+import atopos
 
 def normalise(adata:sc.AnnData,
     batch_key:str = "Sample",
@@ -19,8 +19,8 @@ def normalise(adata:sc.AnnData,
     normalise
     """
     # inplace=False;target_sum=1e4;n_top_genes=3000;batch_key='Sample'
-    bioquest.tl.mkdir(outdir)
-    _saveimg = bioquest.tl.saveimg(formats=formats,outdir=outdir,dpi=dpi)
+    atopos.tl.mkdir(outdir)
+    _saveimg = atopos.tl.saveimg(formats=formats,outdir=outdir,dpi=dpi)
     _adata = adata if inplace else adata.copy()
     _adata.layers["counts"] = _adata.X.copy()
     sc.pp.normalize_total(_adata, target_sum=target_sum, inplace=True)

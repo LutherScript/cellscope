@@ -7,15 +7,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import functools
-import bioquest
+import atopos
 from typing import Tuple, Union, Optional, List
+from ..tools import read_json
+
 
 def flag_gene_family(
     adata: sc.AnnData,
     *,
-    gene_family_name: str,
-    gene_family_pattern: str = None,
-    gene_list: list = None,
+    species: Optional[str] = "hsa",
+    gene_family_name: Optional[str] = None,
+    gene_family_pattern: Optional[str] = None,
+    gene_list: Optional[list] = None,
 ) -> None:
     """
     Flags a gene or gene_family in .var with boolean. (e.g all mitochondrial genes).
@@ -36,8 +39,15 @@ def flag_gene_family(
         adds the boolean column in `.var`
 
     """
+    gene = read_json("genes.json")
+    if species:
+        adata.var["Mito"] = adata.var.index.isin(gene[f"{species}_mito"])
+        if gene.get(f"{species}_ribo"):
+            adata.var["Ribo"] = adata.var.index.isin(gene[f"{species}_ribo"])
     if gene_family_pattern:
-        adata.var[gene_family_name] = adata.var.index.str.contains(pat=gene_family_pattern,flags=re.IGNORECASE,regex=True)
+        adata.var[gene_family_name] = adata.var.index.str.contains(
+            pat=gene_family_pattern, flags=re.IGNORECASE, regex=True
+        )
     if gene_list:
         adata.var[gene_family_name] = adata.var.index.isin(gene_list)
 
@@ -47,10 +57,10 @@ def fastqc(
     *,
     qc_vars: list,
     sample: str = "Sample",
-    outdir: Union[pathlib.PosixPath,str] = pathlib.Path().absolute(),
+    outdir: Union[pathlib.PosixPath, str] = pathlib.Path().absolute(),
     min_genes: int = 200,
     min_cells: int = 3,
-    percent_top: str = (50,),
+    percent_top: str = (20,50),
     log1p: bool = True,
     dpi: int = 300,
     inplace: bool = True,
@@ -60,15 +70,12 @@ def fastqc(
     fastqc
     sk.pp.fastqc(adata_spatial,sample="Sample",outdir=outdir,mitochondrion=True)
     """
-    bioquest.tl.mkdir(outdir)
-    _saveimg = bioquest.tl.saveimg(
-        formats=formats, outdir=outdir, dpi=dpi
-    )
+    atopos.tl.mkdir(outdir)
+    _saveimg = atopos.tl.saveimg(formats=formats, outdir=outdir, dpi=dpi)
     n_samples = len(adata.obs[sample])
     _adata = adata if inplace else adata.copy()
-    # Cell Cycle Phase Classification
-    # cell_phase(_adata)
-    if min_cells:
+
+    if min_genes:
         sc.pp.filter_cells(_adata, min_genes=min_genes)
     if min_cells:
         sc.pp.filter_genes(_adata, min_cells=min_cells)
@@ -88,6 +95,7 @@ def fastqc(
         _n = len(iters)
         _, axes = plt.subplots(1, _n, figsize=(5 * _n, 3))
         for i, (x, y) in enumerate(iters):
+            print(x,y)
             sc.pl.scatter(
                 _adata,
                 x=x,

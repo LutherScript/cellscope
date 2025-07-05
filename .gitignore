@@ -1,0 +1,10 @@
+dist
+deprecated.py
+cellscope/__pycache__
+cellscope/_data/__pycache__
+cellscope/ml/__pycache__
+cellscope/pl/__pycache__
+cellscope/st/__pycache__
+cellscope/tl/__pycache__
+.DS_Store
+cellscope/.DS_Store

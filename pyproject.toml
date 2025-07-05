@@ -1,20 +1,33 @@
-[tool.poetry]
+[project]
 name = "cellscope"
-version = "1.0.0"
+version = "1.1.1"
 description = "single cell multi-omics data analysis toolkit"
-authors = ["生信探索 BioQuest <yehior@qq.com>"]
+authors = [{ name = "生信探索 BioQuest", email = "yehior@qq.com" }]
 readme = "README.md"
+requires-python = ">=3.9"
+dependencies=[
+"numpy>1.19.5",
+"scanpy>1.10",
+"pydeseq2>0.49",
+"pandas>1.5",
+"numpy>1.23"
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-scanpy = "^1.10"
-pydeseq2 = "^0.4.9"
-numpy = "^1.23"
-pandas = "^1.5"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: OS Independent",
+]
 
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^3.7.1"
+[project.urls]
+Homepage = "https://github.com/ScienceAdvances/cellscope"
+
+[tool.setuptools]
+packages = ["cellscope"]
+
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

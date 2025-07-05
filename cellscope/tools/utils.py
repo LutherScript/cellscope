@@ -2,11 +2,12 @@ import pathlib
 import scanpy as sc
 import anndata
 from typing import Optional, Union
+from importlib import resources
+from .. import _data
+
 
 def subset(
-        adata: anndata.AnnData,
-        subsets: dict,
-        inplace: bool = False
+    adata: anndata.AnnData, subsets: dict, inplace: bool = False
 ) -> Optional[anndata.AnnData]:
     """
     filter/subset a AnnData according to subsets conditions
@@ -22,7 +23,8 @@ def subset(
             _a = _a[_lg, :]
     return None if inplace else _a
 
-class Chrom_size():
+
+class Chrom_size:
     hg38 = {
         "chr1": 248956422,
         "chr2": 242193529,
@@ -47,7 +49,7 @@ class Chrom_size():
         "chr21": 46709983,
         "chr22": 50818468,
         "chrX": 156040895,
-        "chrY": 57227415
+        "chrY": 57227415,
     }
     mm10 = {
         "chr1": 195471971,
@@ -72,3 +74,12 @@ class Chrom_size():
         "chrX": 171031299,
         "chrY": 91744698,
     }
+
+
+def read_json(
+    filename: str,
+    encoding="utf-8"
+):
+    import json
+    with resources.open_text(_data, filename, encoding=encoding) as _:
+        return json.load(_)

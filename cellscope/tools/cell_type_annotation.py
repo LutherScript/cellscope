@@ -5,7 +5,7 @@ import scanpy as sc
 import anndata
 from typing import Optional
 import matplotlib.pyplot as plt
-import bioquest as bq
+import atopos
 
 
 def add_label(

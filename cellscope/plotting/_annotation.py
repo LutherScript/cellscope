@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple, Union, Optional,Sequence
 import pandas as pd
 import scanpy as sc
-import bioquest
+import atopos
 import pathlib
 import functools
 from ._emmbeding import dimplot
@@ -17,8 +17,8 @@ def plot_marker(
     formats:tuple = ('pdf','png'),
     palette:str='Reds'
     ):
-    bioquest.tl.mkdir(outdir)
-    _saveimg = bioquest.tl._saveimg(formats=formats,outdir=outdir,dpi=300)
+    atopos.tl.mkdir(outdir)
+    _saveimg = atopos.tl._saveimg(formats=formats,outdir=outdir,dpi=300)
 
     _annot_df = pd.read_csv(annotation,sep='\t', dtype='object')
 
@@ -53,10 +53,10 @@ def score_heatmap(adata,marker_df,reference_key="Cluster",figsize=(9,6),return_s
     markers_dict = {x:np.intersect1d(marker_df.loc[:,x].dropna(),adata.raw.var_names) for x in  marker_df.columns}
     for x in markers_dict.keys():
         sc.tl.score_genes(adata,gene_list=markers_dict[x],score_name=f"{x}_Marker_Score")
-    dt = bq.tl.select(adata.obs,columns=[reference_key],pattern="_Marker_Score$")
+    dt = atopostl.select(adata.obs,columns=[reference_key],pattern="_Marker_Score$")
     adata.obs = obs
     a=dt.groupby(by=reference_key).apply(np.mean,axis=0)
-    a.columns = bq.st.removes(string=a.columns,pattern=r"_Marker_Score$")
+    a.columns = atoposst.removes(string=a.columns,pattern=r"_Marker_Score$")
     import seaborn as sns
     sns.clustermap(a.T,method='complete',standard_scale=0,cmap="viridis",figsize=figsize);
     if return_score:
